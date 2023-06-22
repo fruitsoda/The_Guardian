@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function updateVideoList() {
+                $.ajax({
+                    url: "/video_list",
+                    type: "GET",
+                    success: function(response) {
+                        var files = response.files;
+                        var fileList = "";
+
+                        // 동영상 파일 목록을 생성
+                        for (var i = 0; i < files.length; i++) {
+                            fileList += "<li>" + files[i]+ "</li>";
+                        }
+
+                        // 동영상 파일 목록을 표시
+                        $("#video-list").html(fileList);
+                    }
+                });
+            }
+            // 3초마다 동영상 파일 목록 업데이트
+            setInterval(updateVideoList, 3000);
+        });
+    </script>
+</head>
+<body>
+    <ul id="video-list">
+        {% for file in files %}
+        <li>{{ file }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

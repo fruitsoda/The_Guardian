@@ -1,0 +1,238 @@
+<html>
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<style>
+		
+		@font-face {
+    		font-family: 'yg-jalnan';
+    		src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    		font-weight: normal;
+    		font-style: normal;
+		}
+
+		body {
+			height: 100%;
+			background-color: #f1f1f1;
+		}
+		.container {
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			flex-wrap: wrap;
+			max-width: 1200px;
+		}
+	
+		.box {
+			margin-top: 50px;
+			margin-right:500px;
+			text-align: center;
+			flex: 1;
+		}
+
+		.box2 {
+			font-family: yg-jalnan;
+			position:absolute;
+			margin-top: -40px;
+			margin-left:1500px;
+			text-align: center;
+			flex: 1;
+		}
+	
+		.maintext {
+			font-family: yg-jalnan;
+			color: #00264B;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #0A0561;
+			text-align: left;
+			background-color: white;
+			padding-left: 20px;
+			padding-top: 10px;
+			font-size: 54px;
+		}
+	
+		.cam-container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin-top: 20px;
+			margin-bottom: 50px;
+		}
+	
+		.cam1 {
+			width: 300px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.cam2 {
+			width: 300px;
+			margin-left:50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.cam3 {
+			width: 300px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.cam4 {
+			width: 300px;
+			margin-left:50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	
+		.list {
+			margin-top: 50px;
+			overflow-y: auto;
+			width: 300px;
+			height: calc(100vh - 150px);
+			margin-left: auto; /* Added margin to move the video list to the right */
+		}
+
+		.list::-webkit-scrollbar {
+    		width: 0px;
+  		}
+	
+		.title {
+			font-size: 28px;
+			color: #00264B;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+	
+		.video-title {
+			font-size: 18px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+	
+		.video-list-container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-end; /* Adjusted justification to move the video items to the right */
+			align-items: flex-start;
+			margin-top: 20px;
+		}
+	
+		.video-item {
+			width: 300px;
+			margin-bottom: 10px;
+			background-color: white;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+	
+		.video-container {
+			width: 100%;
+			margin-bottom: 10px;
+			display: flex;
+			justify-content: center;
+		}
+	
+		video {
+			max-width: 100%;
+			height: auto;
+		}
+	</style>
+
+	<title>The Guardian</title>
+</head>
+<body>
+	<div class="top"></div>
+	<h3 class="maintext">The Guardian</h3>
+	<div class="container">
+		<div class="box">
+			<div class="cam-container">
+				<div class="cam1">
+					<img src="{{ url_for('yolo_feed', idx=0) }}" width="300px" height="300px" style="border-radius: 8px;">
+				</div>
+				<div class="cam2">
+					<img src="{{ url_for('yolo_feed', idx=1) }}" width="300px" height="300px" style="border-radius: 8px;">
+				</div>
+			</div>
+			<div class="cam-container">
+				<div class="cam3">
+					<img src="{{ url_for('yolo_feed', idx=2) }}" width="300px" height="300px" style="border-radius: 8px;">
+				</div>
+				<div class="cam4">
+					<img src="{{ url_for('yolo_feed', idx=3) }}" width="300px" height="300px" style="border-radius: 8px;">
+				</div>
+			</div>
+		</div>
+		
+		<div class="box2"> <!-- Added a new box for video list -->
+			<div class="list">
+				<h4 class="title">DETECT VIDEO</h4>
+				<div class="video-list-container"> <!-- Updated container for video list -->
+					{% for file in files %}
+						<div class="video-item"> <!-- Updated video item container -->
+							<div class="video-title"><a href="{{ url_for('webcam', idx=file) }}">{{ file[0] }}번째 카메라 감지</a></div>
+							<video src="{{ url_for('uploaded_file', filename=file) }}" width="300" height="200" controls></video>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function() {
+			var count = 0;
+	
+			function updateVideoList() {
+				$.ajax({
+					url: "/video_list",
+					type: "GET",
+					success: function(response) {
+						var files = response.files;
+	
+						var fileList = "";
+	
+						// Create video file list
+						for (var i = 0; i < files.length; i++) {
+							fileList += '<div class="video-item"><div class="video-title"><a href="/webcam/' + files[i] + '">' + files[i][0] + "번째 카메라 감지" + '</a></div><video src="/uploads/' + files[i] + '" width="300" height="200" controls></video></div>';
+						}
+	
+						// Display video file list
+						$(".video-list-container").html(fileList);
+					}
+				});
+			}
+	
+			// Update the video count and list
+			function updateVideoCountAndList() {
+				$.ajax({
+					url: "/video_count",
+					type: "GET",
+					success: function(response) {
+						var currentlyCount = response.count;
+	
+						if (count !== currentlyCount) {
+							updateVideoList();
+							alert("동영상의 추가 or 삭제가 감지되었습니다!");
+							count = currentlyCount;
+						}
+					}
+				});
+			}
+	
+			// Update the video file list every 3 seconds
+			setInterval(updateVideoCountAndList, 3000);
+		});
+	</script>
+</body>
+</html>

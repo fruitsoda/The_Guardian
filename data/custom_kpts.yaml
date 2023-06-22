@@ -1,0 +1,10 @@
+
+train: ./guardian/images/train
+val: ./guardian/images/val
+
+# number of classes
+nc: 3
+
+names: ['walking', 'crouch', 'lying']
+
+nkpt: 9

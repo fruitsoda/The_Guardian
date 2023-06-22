@@ -1,0 +1,1 @@
+python detect.py --source test.txt --weights Guardian.pt --kpt-label --conf 0.6
